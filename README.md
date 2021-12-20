@@ -1,8 +1,11 @@
-# Basic Sample Hardhat Project
+# Metadata Contracts. 📜
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Contracts about MetaNetwork metadata management.
 
-Try running some of the following tasks:
+📜 IPFSCidTimestampMapping [./contracts/IPFSCidTimestampMapping.sol](./contracts/IPFSCidTimestampMapping.sol)
+
+
+Create by [Hardhat](https://hardhat.org/)
 
 ```shell
 npx hardhat accounts
