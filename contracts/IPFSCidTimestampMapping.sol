@@ -3,15 +3,15 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract IPFSCidTimestampMapping is AccessControl {
-    struct TimeStamp {
+contract IPFSCidTimeInfoMapping is AccessControl {
+    struct TimeInfo {
         uint256 timestamp;
         uint256 blockNumber;
     }
 
-    mapping(string => TimeStamp) public cidTimestampMapping;
+    mapping(string => TimeInfo) public cidTimeInfoMapping;
 
-    event TimestampSaved(string cid);
+    event TimeInfoSaved(string cid);
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -24,19 +24,19 @@ contract IPFSCidTimestampMapping is AccessControl {
 
     function mint(string memory cid) public onlyRole(MINTER_ROLE) {
         require(
-            cidTimestampMapping[cid].timestamp == 0,
+            cidTimeInfoMapping[cid].timestamp == 0,
             "The CID has been minted"
         );
 
-        cidTimestampMapping[cid] = TimeStamp({
+        cidTimeInfoMapping[cid] = TimeInfo({
             timestamp: block.timestamp,
             blockNumber: block.number
         });
 
-        emit TimestampSaved(cid);
+        emit TimeInfoSaved(cid);
     }
 
     function burn(string memory cid) public onlyRole(ADMIN_ROLE) {
-        delete cidTimestampMapping[cid];
+        delete cidTimeInfoMapping[cid];
     }
 }

@@ -1,4 +1,6 @@
-const { expect } = require("chai");
+const chai = require('chai')
+const expect = chai.expect
+chai.use(require('chai-as-promised'))
 const { ethers } = require("hardhat");
 
 describe("Greeter", function () {
@@ -20,18 +22,18 @@ describe("Greeter", function () {
 
 });
 
-describe("IPFSCidTimestampMapping", function () {
+describe("IPFSCidTimeInfoMapping", function () {
 
   let contract;
   let minterRoleSymbol;
   let owner;
   let manager;
-  let cidForTest = 'ipfs://bafybeidw4gt6i3liupy7ytcmi62cu4uazk5gwp4pjo7kivo57ldpts4u2m';
+  let cidForTest = 'bafybeidw4gt6i3liupy7ytcmi62cu4uazk5gwp4pjo7kivo57ldpts4u2m';
 
 
   it("Grant MINTER_ROLE to new manager.", async function () {
-    const IPFSCidTimestampMapping = await ethers.getContractFactory("IPFSCidTimestampMapping");
-    contract = await IPFSCidTimestampMapping.deploy();
+    const IPFSCidTimeInfoMapping = await ethers.getContractFactory("IPFSCidTimeInfoMapping");
+    contract = await IPFSCidTimeInfoMapping.deploy();
     await contract.deployed();
 
     minterRoleSymbol = await contract.MINTER_ROLE();
@@ -47,7 +49,7 @@ describe("IPFSCidTimestampMapping", function () {
 
   it("Generate cid", async function () {
     await contract.connect(manager).mint(cidForTest);
-    const mapping = await contract.cidTimestampMapping(cidForTest);
+    const mapping = await contract.cidTimeInfoMapping(cidForTest);
     console.log(`now timestamp`, ethers.utils.formatUnits(mapping.timestamp, 0));
     console.log(`now block`, ethers.utils.formatUnits(mapping.blockNumber, 0));
     expect(mapping.timestamp).to.be.above(0);
@@ -55,18 +57,15 @@ describe("IPFSCidTimestampMapping", function () {
   });
 
   it("Try generate cid again", async function () {
-    try {
-      await contract.connect(manager).mint(cidForTest);
-    } catch (error) {
-      const errorMessage = error.message;
-      expect(errorMessage).to.equal("VM Exception while processing transaction: reverted with reason string 'The CID has been minted'");
-    }
-
+    const badFn = async function () {
+      await contract.mint(cidForTest);
+    };
+    await expect(badFn()).to.be.rejectedWith(Error);
   });
 
   it("Delete cid mapping by admin", async function () {
     await contract.burn(cidForTest);
-    const deletedMapping = await contract.cidTimestampMapping(cidForTest);
+    const deletedMapping = await contract.cidTimeInfoMapping(cidForTest);
     expect(deletedMapping.timestamp).to.equal(0);
     expect(deletedMapping.blockNumber).to.equal(0);
 
