@@ -71,6 +71,13 @@ describe("IPFSCidTimeInfoMapping", function () {
 
   });
 
+  it("Get time info from a null CID", async function () {
+    const badFn = async function () {
+      await contract.getCIDTimeInfo("notExistCID");
+    };
+    await expect(badFn()).to.be.rejectedWith(Error);
+  });
+
 
 
 

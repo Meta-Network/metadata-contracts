@@ -39,4 +39,20 @@ contract IPFSCidTimeInfoMapping is AccessControl {
     function burn(string memory cid) public onlyRole(ADMIN_ROLE) {
         delete cidTimeInfoMapping[cid];
     }
+
+    function getCIDTimeInfo(string memory cid)
+        public
+        view
+        returns (uint256, uint256)
+    {
+        require(
+            cidTimeInfoMapping[cid].timestamp != 0,
+            "The CID has not been minted"
+        );
+
+        return (
+            cidTimeInfoMapping[cid].timestamp,
+            cidTimeInfoMapping[cid].blockNumber
+        );
+    }
 }
